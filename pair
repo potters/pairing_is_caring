@@ -7,6 +7,9 @@ while [[ $1 = -* ]]; do
     -l)
       export IP=$(ifconfig en0 | grep -o '\(\d\{1,3\}\.\)\{3\}\d\{1,3\}' | head -n1)
       ;;
+    -e)
+      export SSH_IP=$(curl -s http://ifconfig.me)
+      ;;
     -p)
       if [[ $1 != [0-9]* ]] ; then
         echo "$1 is not a valid port number"
@@ -38,6 +41,10 @@ if [[ -z $IP ]] ; then
   export IP=$(ifconfig en0 | grep -o '\(\d\{1,3\}\.\)\{3\}\d\{1,3\}' | head -n1)
 fi
 
+if [[ -z $SSH_IP ]] ; then
+  export SSH_IP=$IP
+fi
+
 if [[ -z $PORT ]] ; then
   export PORT="443"
 fi
@@ -48,5 +55,5 @@ if [[ -z $IP ]] ; then
 fi
 
 echo "To join this session, run:"
-echo "ssh pairbear@$IP -p$PORT"
+echo "ssh pairbear@$SSH_IP -p$PORT"
 ssh pairbear@$IP -p$PORT
